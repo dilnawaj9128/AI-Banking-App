@@ -5,6 +5,8 @@ services:
   mongo:
     image: mongo:7
     container_name: bankapp-mongo
+    ports:
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     networks:
@@ -15,6 +17,8 @@ services:
     build:
       context: ./backend
     container_name: bankapp-backend
+    ports:
+      - "5000:5000"
     environment:
       - PORT=5000
       - JWT_SECRET=super-secret-jwt-key
@@ -30,19 +34,17 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
 
   frontend:
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=/api
+        - VITE_API_URL=http://13.48.78.119:5000/api
     container_name: bankapp-frontend
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - bankapp-network
     restart: unless-stopped
