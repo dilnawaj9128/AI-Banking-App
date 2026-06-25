@@ -20,7 +20,10 @@ services:
       retries: 3
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://13.60.157.181:5000/api
     container_name: bankapp-frontend
     ports:
       - "3000:80"
