@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bankapp-backend
+  namespace: bankapp
+  labels:
+    app: bankapp-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bankapp-backend
+  template:
+    metadata:
+      labels:
+        app: bankapp-backend
+    spec:
+      containers:
+      - name: backend
+        image: YOUR_DOCKERHUB/ai-bankapp-backend:IMAGE_TAG
+        ports:
+        - containerPort: 5000
+        env:
+        - name: PORT
+          value: "5000"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: bankapp-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "300m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bankapp-backend-svc
+  namespace: bankapp
+spec:
+  selector:
+    app: bankapp-backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: bankapp-backend-hpa
+  namespace: bankapp
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: bankapp-backend
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

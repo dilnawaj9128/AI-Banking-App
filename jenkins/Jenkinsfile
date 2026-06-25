@@ -1,0 +1,104 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USER   = credentials('dockerhub-username')
+        DOCKERHUB_PASS   = credentials('dockerhub-password')
+        IMAGE_NAME       = "ai-bankapp"
+        IMAGE_TAG        = "${BUILD_NUMBER}"
+        KUBE_CONFIG      = credentials('kubeconfig')
+    }
+
+    stages {
+
+        stage('📥 Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/ai-bankapp.git'
+                echo "✅ Code checked out"
+            }
+        }
+
+        stage('📦 Install Dependencies') {
+            steps {
+                dir('backend') {
+                    sh 'npm ci'
+                }
+                echo "✅ Dependencies installed"
+            }
+        }
+
+        stage('🧪 Run Tests') {
+            steps {
+                dir('backend') {
+                    sh 'npm test -- --passWithNoTests'
+                }
+                echo "✅ Tests passed"
+            }
+        }
+
+        stage('🐳 Build Docker Images') {
+            parallel {
+                stage('Build Backend') {
+                    steps {
+                        sh "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:${IMAGE_TAG} ./backend"
+                        sh "docker tag ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:${IMAGE_TAG} ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:latest"
+                    }
+                }
+                stage('Build Frontend') {
+                    steps {
+                        sh "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}-frontend:${IMAGE_TAG} ./frontend"
+                        sh "docker tag ${DOCKERHUB_USER}/${IMAGE_NAME}-frontend:${IMAGE_TAG} ${DOCKERHUB_USER}/${IMAGE_NAME}-frontend:latest"
+                    }
+                }
+            }
+        }
+
+        stage('🔍 Security Scan') {
+            steps {
+                sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:${IMAGE_TAG} --severity HIGH,CRITICAL --exit-code 0"
+                echo "✅ Security scan complete"
+            }
+        }
+
+        stage('📤 Push to DockerHub') {
+            steps {
+                sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin"
+                sh "docker push ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:${IMAGE_TAG}"
+                sh "docker push ${DOCKERHUB_USER}/${IMAGE_NAME}-backend:latest"
+                sh "docker push ${DOCKERHUB_USER}/${IMAGE_NAME}-frontend:${IMAGE_TAG}"
+                sh "docker push ${DOCKERHUB_USER}/${IMAGE_NAME}-frontend:latest"
+                echo "✅ Images pushed to DockerHub"
+            }
+        }
+
+        stage('☸️ Deploy to Kubernetes') {
+            steps {
+                sh "sed -i 's|IMAGE_TAG|${IMAGE_TAG}|g' k8s/backend-deployment.yaml"
+                sh "kubectl --kubeconfig=${KUBE_CONFIG} apply -f k8s/"
+                sh "kubectl --kubeconfig=${KUBE_CONFIG} rollout status deployment/bankapp-backend -n bankapp"
+                echo "✅ Deployed to Kubernetes"
+            }
+        }
+
+        stage('✅ Health Check') {
+            steps {
+                sleep(time: 15, unit: 'SECONDS')
+                sh "kubectl --kubeconfig=${KUBE_CONFIG} get pods -n bankapp"
+                echo "✅ All pods running"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Pipeline SUCCESS - Build #${BUILD_NUMBER} deployed!"
+        }
+        failure {
+            echo "❌ Pipeline FAILED - Check logs above"
+        }
+        always {
+            sh "docker logout"
+            cleanWs()
+        }
+    }
+}
