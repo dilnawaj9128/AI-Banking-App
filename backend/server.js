@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -114,7 +113,8 @@ app.post('/api/ai-chat', auth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/health', (req, res) => res.json({ status: 'OK', service: 'AI-BankApp' }));
+// Support both docker layer and proxy routing checks
+app.get(['/health', '/api/health'], (req, res) => res.json({ status: 'OK', service: 'AI-BankApp' }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🏦 AI BankApp running on port ${PORT}`));
