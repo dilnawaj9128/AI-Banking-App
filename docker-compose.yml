@@ -2,6 +2,17 @@ version: '3.8'
 
 services:
 
+  mongo:
+    image: mongo:7
+    container_name: bankapp-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - bankapp-network
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
@@ -12,6 +23,9 @@ services:
       - PORT=5000
       - JWT_SECRET=super-secret-jwt-key
       - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/bankapp
+    depends_on:
+      - mongo
     networks:
       - bankapp-network
     restart: unless-stopped
@@ -25,7 +39,7 @@ services:
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=http://13.60.157.181:5000/api
+        - VITE_API_URL=http://13.48.78.119:5000/api
     container_name: bankapp-frontend
     ports:
       - "3000:80"
@@ -34,6 +48,9 @@ services:
     networks:
       - bankapp-network
     restart: unless-stopped
+
+volumes:
+  mongo-data:
 
 networks:
   bankapp-network:
