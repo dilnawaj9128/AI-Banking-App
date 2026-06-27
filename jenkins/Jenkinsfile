@@ -6,7 +6,6 @@ pipeline {
         DOCKERHUB_PASS   = credentials('dockerhub-password')
         IMAGE_NAME       = "ai-bankapp"
         IMAGE_TAG        = "${BUILD_NUMBER}"
-        KUBE_CONFIG      = credentials('kubeconfig')
     }
 
     stages {
