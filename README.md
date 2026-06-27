@@ -53,14 +53,12 @@ A full-stack AI-powered banking application with complete DevOps pipeline.
 |-------|-----------|
 | Frontend | React.js, Nginx |
 | Backend | Node.js, Express |
-| Database | MySQL (AWS RDS) |
+| Database | MongoDB |
 | CI/CD | Jenkins + GitHub Actions |
 | Containerization | Docker, DockerHub |
 | Orchestration | Kubernetes (AWS EKS) |
-| Infrastructure | Terraform |
-| Monitoring | Prometheus + Grafana |
 | Security Scan | Trivy |
-| Cloud | AWS (EKS, RDS, S3, VPC) |
+| Cloud | AWS (EC2) |
 
 ## ✨ App Features
 
