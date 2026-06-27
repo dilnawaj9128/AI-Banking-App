@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // ── API CONFIG ────────────────────────────────────────────────────
 // Change this to your backend URL when deploying
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "/api";
 
 // ── API HELPER ────────────────────────────────────────────────────
 async function apiFetch(path, options = {}, token = null) {
