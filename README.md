@@ -13,7 +13,7 @@ A full-stack AI-powered banking application with complete DevOps pipeline.
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              CI/CD (Jenkins / GitHub Actions)               │
-│   Install → Test → Build Docker → Scan → Push → Deploy      │
+│   Clone → Test → Build Docker → Scan → Push → Deploy      │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
