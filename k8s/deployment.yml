@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: ai-banking-app
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-banking-app
+
+  template:
+    metadata:
+      labels:
+        app: ai-banking-app
+
+    spec:
+      containers:
+      - name: frontend
+        image: dilnawaz9128/ai-banking-app-frontend:latest
+        ports:
+        - containerPort: 80
+      - name: backend
+        image: dilnawaz9128/ai-banking-app-backend:latest
+        ports:
+        - containerPort: 5000
