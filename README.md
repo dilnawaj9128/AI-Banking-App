@@ -1,8 +1,158 @@
----
+# 🏦 AUREX — AI Banking App
 
-## ☸️ Kubernetes Setup
+A full-stack AI-powered banking application with complete DevOps pipeline.
 
-### Resources Deployed
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        DEVELOPER                            │
+│                    git push → GitHub                        │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ webhook
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Jenkins CI/CD Pipeline                   │
+│   Clone → Build Docker → Trivy Scan → Push → Deploy        │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    DockerHub Registry                       │
+│     ai-banking-app-frontend:latest                          │
+│     ai-banking-app-backend:latest                           │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ kubectl apply
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│              KIND Kubernetes Cluster (AWS EC2)              │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────────────┐  │
+│  │  Frontend  │  │  Backend   │  │      MongoDB         │  │
+│  │  (Nginx)   │  │ (Node.js)  │  │   (ClusterIP)        │  │
+│  └────────────┘  └─────┬──────┘  └──────────────────────┘  │
+│                        │                                    │
+│              Nginx Reverse Proxy → /api                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React.js, Vite, Nginx |
+| Backend | Node.js, Express.js |
+| Database | MongoDB |
+| CI/CD | Jenkins |
+| Containerization | Docker, DockerHub |
+| Orchestration | Kubernetes (KIND) |
+| Security Scan | Trivy |
+| Cloud | AWS EC2 |
+
+## ✨ App Features
+
+- 🔐 User Register / Login (JWT Auth)
+- 💰 Account Balance Check
+- 💸 Money Transfer
+- 📊 Transaction History
+- 🤖 AI Banking Assistant (Chatbot)
+
+## 🖼️ Screenshots
+
+### Login Page — Backend Connected
+![Login](screenshots/login.png)
+
+### Dashboard — Account Overview
+![Dashboard](screenshots/dashboard.png)
+
+### Transfer Funds
+![Transfer](screenshots/transfer.png)
+
+### AI Assistant
+![AI Assistant](screenshots/ai-assistant.png)
+
+### Kubernetes — Pods, Nodes & Services
+![kubectl](screenshots/kubectl-pods.png)
+
+### DockerHub — Images Pushed
+![DockerHub](screenshots/dockerhub.png)
+
+### Trivy Security Scan
+![Trivy](screenshots/trivy-scan-1.png)
+
+## 🚀 Quick Start (Local)
+
+```bash
+# Clone the repo
+git clone https://github.com/dilnawaj9128/AI-Banking-App.git
+cd AI-Banking-App
+
+# Run with Docker Compose
+docker-compose up -d
+
+# Access:
+# Frontend → http://localhost:3000
+# Backend  → http://localhost:5000
+```
+
+## ☸️ Deploy to Kubernetes
+
+```bash
+# Apply manifests
+kubectl apply -f k8s/deployment.yml
+kubectl apply -f k8s/service.yml
+
+# Check status
+kubectl get pods
+kubectl get svc
+
+# Access app
+kubectl port-forward svc/ai-banking-service 9090:80 --address 0.0.0.0 &
+```
+
+## 🔧 Jenkins Setup
+
+1. Install plugins: Git, Docker Pipeline
+2. Add credentials: `dockerHubCred` (username + password)
+3. Give kubectl access to Jenkins:
+```bash
+sudo mkdir -p /var/lib/jenkins/.kube
+sudo cp ~/.kube/config /var/lib/jenkins/.kube/config
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
+```
+4. Create Pipeline job → point to `Jenkinsfile`
+5. Add GitHub webhook → `http://<jenkins-url>:8080/github-webhook/`
+
+## ⚙️ CI/CD Pipeline Stages
+
+```
+1. 📥 Code Clone       — Pull latest code from GitHub
+2. 🐳 Docker Build     — Build frontend & backend images (parallel)
+3. 🔍 Security Scan    — Trivy scan for HIGH/CRITICAL vulnerabilities
+4. 📤 Push to DockerHub — Tag and push images
+5. ☸️  Deploy to K8s   — kubectl apply + rollout restart
+6. ✅ Health Check     — Verify all pods are running
+```
+
+## 📁 Project Structure
+
+```
+AI-Banking-App/
+├── backend/
+│   ├── index.js            # Express API
+│   └── Dockerfile
+├── frontend/
+│   ├── src/                # React app
+│   ├── nginx.conf          # Reverse proxy config
+│   └── Dockerfile
+├── k8s/
+│   ├── deployment.yml      # App + MongoDB deployments
+│   └── service.yml         # NodePort + ClusterIP services
+├── screenshots/            # Project screenshots
+├── Jenkinsfile             # CI/CD pipeline
+└── docker-compose.yml      # Local dev
+```
+
+## ☸️ Kubernetes Resources
 
 | Resource | Name | Type |
 |----------|------|------|
@@ -12,90 +162,10 @@
 | Service | bankapp-backend | ClusterIP (5000) |
 | Service | mongo | ClusterIP (27017) |
 
-### Check Status
-
-```bash
-kubectl get pods
-kubectl get svc
-kubectl get nodes
-```
-
----
-
-## 🚀 Run Locally with Docker Compose
-
-```bash
-# Clone the repo
-git clone https://github.com/dilnawaj9128/AI-Banking-App.git
-cd AI-Banking-App
-
-# Run all services
-docker-compose up -d
-
-# Access app
-http://localhost:3000
-```
-
----
-
-## ☸️ Deploy on Kubernetes
-
-```bash
-# Apply manifests
-kubectl apply -f k8s/deployment.yml
-kubectl apply -f k8s/service.yml
-
-# Check pods
-kubectl get pods
-
-# Access app
-kubectl port-forward svc/ai-banking-service 9090:80 --address 0.0.0.0 &
-```
-
----
-
-## 🔐 Jenkins Setup
-
-### Credentials Required
-
-| Credential ID | Type | Description |
-|--------------|------|-------------|
-| `dockerHubCred` | Username/Password | DockerHub login |
-
-### Give kubectl access to Jenkins
-
-```bash
-sudo mkdir -p /var/lib/jenkins/.kube
-sudo cp ~/.kube/config /var/lib/jenkins/.kube/config
-sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
-```
-
----
-
-## 🎯 Key DevOps Concepts Demonstrated
-
-- ✅ Multi-container Docker setup (Frontend + Backend + MongoDB)
-- ✅ Parallel pipeline stages in Jenkins
-- ✅ Container security scanning with Trivy (HIGH/CRITICAL)
-- ✅ Kubernetes Deployments, Services (NodePort + ClusterIP)
-- ✅ Nginx reverse proxy for API routing
-- ✅ Rolling updates with `kubectl rollout restart`
-- ✅ MongoDB deployed inside Kubernetes cluster
-- ✅ DockerHub as container registry
-
----
-
 ## 👨‍💻 Author
 
-**Md Dilnawaj**  
-B.Tech CSE — Maharshi Dayanand University (MDU), Rohtak  
-Fresher DevOps Engineer
+**Md Dilnawaj**
+B.Tech CSE — MDU Rohtak | Fresher DevOps Engineer | Delhi, India
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/dilnawaj)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/dilnawaj9128)
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
