@@ -14,7 +14,7 @@ spec:
   type: NodePort
 
 ---
-# Backend Service (nginx.conf se match)
+# Backend Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,4 +26,18 @@ spec:
   - name: backend
     port: 5000
     targetPort: 5000
+  type: ClusterIP
+
+---
+# MongoDB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
   type: ClusterIP
