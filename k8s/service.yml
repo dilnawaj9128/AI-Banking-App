@@ -1,10 +1,8 @@
+# Frontend Service
 apiVersion: v1
-
 kind: Service
-
 metadata:
   name: ai-banking-service
-
 spec:
   selector:
     app: ai-banking-app
@@ -13,8 +11,19 @@ spec:
     port: 80
     targetPort: 80
     nodePort: 30080
+  type: NodePort
+
+---
+# Backend Service (nginx.conf se match)
+apiVersion: v1
+kind: Service
+metadata:
+  name: bankapp-backend
+spec:
+  selector:
+    app: ai-banking-app
+  ports:
   - name: backend
     port: 5000
     targetPort: 5000
-    nodePort: 30500
-  type: NodePort
+  type: ClusterIP
