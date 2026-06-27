@@ -1,21 +1,17 @@
+---
 apiVersion: apps/v1
-
 kind: Deployment
-
 metadata:
   name: ai-banking-app
-
 spec:
   replicas: 2
   selector:
     matchLabels:
       app: ai-banking-app
-
   template:
     metadata:
       labels:
         app: ai-banking-app
-
     spec:
       containers:
       - name: frontend
@@ -26,3 +22,24 @@ spec:
         image: dilnawaz9128/ai-banking-app-backend:latest
         ports:
         - containerPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:6
+        ports:
+        - containerPort: 27017
