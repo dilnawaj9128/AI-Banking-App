@@ -70,7 +70,7 @@ A full-stack AI-powered banking application with complete DevOps pipeline.
 ![AI Assistant](screenshots/ai-assistant.png)
 
 ### Kubernetes — Pods, Nodes & Services
-![kubectl](screenshots/kubectl-pods.png)
+![image](https://github.com/dilnawaj9128/AI-Banking-App/blob/2a0fed8bb722f71a05065014c01ceec738602106/screenshots/Screenshot%20from%202026-06-28%2001-57-47.png)
 
 ### DockerHub — Images Pushed
 ![DockerHub](screenshots/dockerhub.png)
