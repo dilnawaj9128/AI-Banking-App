@@ -76,7 +76,7 @@ A full-stack AI-powered banking application with complete DevOps pipeline.
 ![DockerHub](screenshots/dockerhub.png)
 
 ### Trivy Security Scan
-![Trivy](screenshots/trivy-scan-1.png)
+![image](https://github.com/dilnawaj9128/AI-Banking-App/blob/cb455ea411c1cfd99ffb9fd32d612e9d4b5e2109/screenshots/Screenshot%20from%202026-06-28%2002-02-00.png)
 
 ## 🚀 Quick Start (Local)
 
