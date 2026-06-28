@@ -63,8 +63,8 @@ A full-stack AI-powered banking application with complete DevOps pipeline.
 
 ### Dashboard — Account Overview
 ![image](https://github.com/dilnawaj9128/AI-Banking-App/blob/ef21ab6d90c60e4d777f7645a3a2d63b0eaa058a/Screenshot%20from%202026-06-25%2015-03-49.png)
-### Transfer Funds
-![Transfer](screenshots/transfer.png)
+### CI/CD Pipeline
+![image](https://github.com/dilnawaj9128/AI-Banking-App/blob/2dac572c39009c4c824a2517d7bffa971b0d756b/screenshots/Screenshot%20from%202026-06-28%2002-31-44.png)
 
 ### AI Assistant
 ![AI Assistant](screenshots/ai-assistant.png)
