@@ -4,37 +4,6 @@ A full-stack AI-powered banking application with complete DevOps pipeline
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        DEVELOPER                            │
-│                    git push → GitHub                        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ webhook
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Jenkins CI/CD Pipeline                   │
-│   Clone → Build Docker → Trivy Scan → Push → Deploy        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    DockerHub Registry                       │
-│     ai-banking-app-frontend:latest                          │
-│     ai-banking-app-backend:latest                           │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ kubectl apply
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│              KIND Kubernetes Cluster (AWS EC2)              │
-│  ┌────────────┐  ┌────────────┐  ┌──────────────────────┐  │
-│  │  Frontend  │  │  Backend   │  │      MongoDB         │  │
-│  │  (Nginx)   │  │ (Node.js)  │  │   (ClusterIP)        │  │
-│  └────────────┘  └─────┬──────┘  └──────────────────────┘  │
-│                        │                                    │
-│              Nginx Reverse Proxy → /api                     │
-└─────────────────────────────────────────────────────────────┘
-```
-
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
