@@ -3,7 +3,7 @@
 A full-stack AI-powered banking application with complete DevOps pipeline
 
 ## 🏗️ Architecture
-
+![image](https://github.com/dilnawaj9128/AI-Banking-App/blob/170e81b1d5a2cce38efc4ac534dec7d8a6a2a14f/screenshots/file_00000000833872098aa8eac51c95386d%20(1).png)
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
