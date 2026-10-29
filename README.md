@@ -1,4 +1,4 @@
-# 🏦 AUREX — AI Banking App
+#. 🏦 AUREX — AI Banking App
 
 A full-stack AI-powered banking application with complete DevOps pipeline
 
